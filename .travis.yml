@@ -11,5 +11,5 @@ script:
   - npm run build
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker login --username=zhangzongcheng@qilun --password=a1234567 registry.cn-hangzhou.aliyuncs.com
-  - docker build -t mike-zongcheng/test:latest .
-  - docker push  registry.cn-hangzhou.aliyuncs.com/project-temp/test_docker:fe-yarn
+  - docker build -t registry.cn-hangzhou.aliyuncs.com/project-temp/test_docker:fe-yarn .
+  - docker push registry.cn-hangzhou.aliyuncs.com/project-temp/test_docker:fe-yarn
