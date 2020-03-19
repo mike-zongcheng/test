@@ -9,5 +9,6 @@ script:
   - npm run build
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker login --username=zhangzongcheng@qilun --password=a1234567 registry.cn-hangzhou.aliyuncs.com
-  - docker tag dockertest registry.cn-hangzhou.aliyuncs.com/project-temp/test_docker:1.0.0
+  - docker build -t yibeirecha/docker:latest .
+  - docker tag yibeirecha/docker:latest registry.cn-hangzhou.aliyuncs.com/project-temp/test_docker:1.0.0
   - docker push registry.cn-hangzhou.aliyuncs.com/project-temp/test_docker:1.0.0
