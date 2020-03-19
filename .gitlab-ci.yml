@@ -1,0 +1,84 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_HOST: tcp://localhost:2375
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
+  REGISTRY_ROOT: registry.cn-hangzhou.aliyuncs.com
+  REGISTRY_NAMESPACE: faceradar
+  PROJECT_NAME: faceradar-fe
+  IMAGE_TAG: $REGISTRY_ROOT/$REGISTRY_NAMESPACE/$PROJECT_NAME:$CI_COMMIT_REF_NAME-$CI_COMMIT_SHA
+  KUBECONFIG: /deploy/config
+  KUBERNETES_NAMESPACE: $REGISTRY_NAMESPACE-$CI_COMMIT_REF_NAME
+
+# build
+develop_build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - sed -i "s/__BUILD__/build-test/g" ./DevOps/Dockerfile
+    - sed -i "s/__FROM_IMAGE_TAG__/$REGISTRY_ROOT\/project-base\/base:fe-nginx/g" ./DevOps/Dockerfile
+    - docker login -u=$REGISTRY_USERNAME -p=$REGISTRY_PASSWORD $REGISTRY_ROOT
+    - docker build -t $IMAGE_TAG -f ./DevOps/Dockerfile .
+    - docker push $IMAGE_TAG
+  only:
+    - develop
+  tags:
+    - kubernetes
+
+# build
+production_build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - sed -i "s/__BUILD__/build/g" ./DevOps/Dockerfile
+    - sed -i "s/__FROM_IMAGE_TAG__/$REGISTRY_ROOT\/project-base\/base:fe-nginx/g" ./DevOps/Dockerfile
+    - docker login -u=$REGISTRY_USERNAME -p=$REGISTRY_PASSWORD $REGISTRY_ROOT
+    - docker build -t $IMAGE_TAG -f ./DevOps/Dockerfile .
+    - docker push $IMAGE_TAG
+  only:
+    - master
+  tags:
+    - kubernetes
+
+# Deploy
+develop_deploy:
+  stage: deploy
+  image: $REGISTRY_ROOT/build-tools/centos-kubectl:0.1.0
+  environment:
+    name: develop
+    url: https://$DEVELOP_DOMAIN/
+  script:
+    - echo $KUBE_CONFIG |base64 -d > $KUBECONFIG
+    - sed -i "s|PROJECT_NAME|$PROJECT_NAME|g" ./DevOps/Deployment.yaml
+    - sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" ./DevOps/Deployment.yaml
+    - sed -i "s|DOMAIN|$DEVELOP_DOMAIN|g" ./DevOps/Deployment.yaml
+    - kubectl apply -f ./DevOps/Deployment.yaml --namespace="${KUBERNETES_NAMESPACE}"
+  only:
+    - develop
+  tags:
+    - kubernetes
+
+production_deploy:
+  when: manual
+  stage: deploy
+  image: $REGISTRY_ROOT/build-tools/centos-kubectl:0.1.0
+  environment:
+    name: production
+    url: https://$MASTER_DOMAIN/
+  script:
+    - echo $KUBE_CONFIG |base64 -d > $KUBECONFIG
+    - sed -i "s|PROJECT_NAME|$PROJECT_NAME|g" ./DevOps/Deployment.yaml
+    - sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" ./DevOps/Deployment.yaml
+    - sed -i "s|DOMAIN|$MASTER_DOMAIN|g" ./DevOps/Deployment.yaml
+    - kubectl apply -f ./DevOps/Deployment.yaml --namespace="${KUBERNETES_NAMESPACE}"
+  only:
+    - master
+  tags:
+    - kubernetes

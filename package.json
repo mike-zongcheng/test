@@ -1,0 +1,71 @@
+{
+  "name": "fase",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "build-test": "vue-cli-service build --mode test",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@chenfengyuan/vue-qrcode": "^1.0.1",
+    "@sentry/browser": "^5.7.1",
+    "@sentry/integrations": "^5.7.1",
+    "@vant/touch-emulator": "^1.1.0",
+    "core-js": "^2.6.5",
+    "vant": "^2.2.13",
+    "vue": "^2.6.10",
+    "vue-clipboard2": "^0.3.1",
+    "vue-ctk-date-time-picker": "^2.1.1",
+    "vue-router": "^3.1.3",
+    "vuex": "^3.1.1",
+    "weixin-js-sdk": "^1.4.0-test"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.11.0",
+    "@vue/cli-plugin-eslint": "^3.11.0",
+    "@vue/cli-service": "^3.11.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "flyio": "^0.6.14",
+    "less": "^3.10.3",
+    "less-loader": "^5.0.0",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended",
+      "@vue/standard"
+    ],
+    "rules": {
+      "no-console": 0
+    },
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "description": "我们利用人工智能和大数据进行全网人脸搜索，帮您及时检测您的肖像是否被盗用或偷拍并非法公布于互联网。",
+  "keywords": [
+    "人脸侦探",
+    "人脸隐私",
+    "隐私权",
+    "偷拍"
+  ],
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
+}
